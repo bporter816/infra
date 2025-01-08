@@ -1,4 +1,10 @@
 terraform {
+  cloud {
+    organization = "bporter816"
+    workspaces {
+      name = "infra"
+    }
+  }
   required_version = "~> 1.10.3"
   required_providers {
     aws = {
