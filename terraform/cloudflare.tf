@@ -73,20 +73,7 @@ resource "cloudflare_workers_script" "rebuild" {
   account_id = var.cloudflare_account_id
   name       = "rebuild-site"
   module     = true
-  content    = <<-EOT
-    async function rebuild(env) {
-      await fetch(env.DEPLOY_HOOK_URL,
-        {
-          method: "POST",
-        },
-      )
-    }
-    export default {
-      async scheduled(event, env, ctx) {
-        ctx.waitUntil(rebuild(env));
-      },
-    };
-  EOT
+  content    = file("workers/rebuild-site.js")
 }
 
 resource "cloudflare_workers_cron_trigger" "rebuild_trigger" {
