@@ -1,3 +1,4 @@
+# benjaminporter.me
 data "aws_secretsmanager_secret_version" "website_secrets" {
   secret_id = "website-secrets"
 }
@@ -89,4 +90,82 @@ resource "cloudflare_workers_secret" "deploy_hook_url" {
   name        = "DEPLOY_HOOK_URL"
   script_name = cloudflare_workers_script.rebuild.name
   secret_text = local.website_secrets["DEPLOY_HOOK_URL"]
+}
+
+# issilksongoutyet.com
+import {
+  id = "2cb0221f06c8e9759fee84db2b6c1d9e"
+  to = cloudflare_zone.issilksongoutyet_com
+}
+
+resource "cloudflare_zone" "issilksongoutyet_com" {
+  account_id = var.cloudflare_account_id
+  zone       = "issilksongoutyet.com"
+  type       = "full"
+  plan       = "free"
+}
+
+import {
+  id = "2cb0221f06c8e9759fee84db2b6c1d9e/5c23a319147253d1dcf6e8a8f1c34a07"
+  to = cloudflare_record.github_1
+}
+
+resource "cloudflare_record" "github_1" {
+  zone_id = cloudflare_zone.issilksongoutyet_com.id
+  type    = "A"
+  name    = "@"
+  content = "185.199.108.153"
+  proxied = true
+}
+
+import {
+  id = "2cb0221f06c8e9759fee84db2b6c1d9e/62e4631d3d8602665cf8deb7a5c558e1"
+  to = cloudflare_record.github_2
+}
+
+resource "cloudflare_record" "github_2" {
+  zone_id = cloudflare_zone.issilksongoutyet_com.id
+  type    = "A"
+  name    = "@"
+  content = "185.199.109.153"
+  proxied = true
+}
+
+import {
+  id = "2cb0221f06c8e9759fee84db2b6c1d9e/59f16ec1f1f74ee8ed08b65114ec27b2"
+  to = cloudflare_record.github_3
+}
+
+resource "cloudflare_record" "github_3" {
+  zone_id = cloudflare_zone.issilksongoutyet_com.id
+  type    = "A"
+  name    = "@"
+  content = "185.199.110.153"
+  proxied = true
+}
+
+import {
+  id = "2cb0221f06c8e9759fee84db2b6c1d9e/b028ef2ac434e790097005034283dc20"
+  to = cloudflare_record.github_4
+}
+
+resource "cloudflare_record" "github_4" {
+  zone_id = cloudflare_zone.issilksongoutyet_com.id
+  type    = "A"
+  name    = "@"
+  content = "185.199.111.153"
+  proxied = true
+}
+
+import {
+  id = "2cb0221f06c8e9759fee84db2b6c1d9e/4b385b34f0974cb9105b053883ffe118"
+  to = cloudflare_record.www
+}
+
+resource "cloudflare_record" "www" {
+  zone_id = cloudflare_zone.issilksongoutyet_com.id
+  type    = "CNAME"
+  name    = "www"
+  content = "bporter816.github.io"
+  proxied = true
 }
