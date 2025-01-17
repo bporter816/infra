@@ -93,21 +93,11 @@ resource "cloudflare_workers_secret" "deploy_hook_url" {
 }
 
 # issilksongoutyet.com
-import {
-  id = "2cb0221f06c8e9759fee84db2b6c1d9e"
-  to = cloudflare_zone.issilksongoutyet_com
-}
-
 resource "cloudflare_zone" "issilksongoutyet_com" {
   account_id = var.cloudflare_account_id
   zone       = "issilksongoutyet.com"
   type       = "full"
   plan       = "free"
-}
-
-import {
-  id = "2cb0221f06c8e9759fee84db2b6c1d9e/5c23a319147253d1dcf6e8a8f1c34a07"
-  to = cloudflare_record.github_1
 }
 
 resource "cloudflare_record" "github_1" {
@@ -118,22 +108,12 @@ resource "cloudflare_record" "github_1" {
   proxied = true
 }
 
-import {
-  id = "2cb0221f06c8e9759fee84db2b6c1d9e/62e4631d3d8602665cf8deb7a5c558e1"
-  to = cloudflare_record.github_2
-}
-
 resource "cloudflare_record" "github_2" {
   zone_id = cloudflare_zone.issilksongoutyet_com.id
   type    = "A"
   name    = "@"
   content = "185.199.109.153"
   proxied = true
-}
-
-import {
-  id = "2cb0221f06c8e9759fee84db2b6c1d9e/59f16ec1f1f74ee8ed08b65114ec27b2"
-  to = cloudflare_record.github_3
 }
 
 resource "cloudflare_record" "github_3" {
@@ -144,22 +124,12 @@ resource "cloudflare_record" "github_3" {
   proxied = true
 }
 
-import {
-  id = "2cb0221f06c8e9759fee84db2b6c1d9e/b028ef2ac434e790097005034283dc20"
-  to = cloudflare_record.github_4
-}
-
 resource "cloudflare_record" "github_4" {
   zone_id = cloudflare_zone.issilksongoutyet_com.id
   type    = "A"
   name    = "@"
   content = "185.199.111.153"
   proxied = true
-}
-
-import {
-  id = "2cb0221f06c8e9759fee84db2b6c1d9e/4b385b34f0974cb9105b053883ffe118"
-  to = cloudflare_record.www
 }
 
 resource "cloudflare_record" "www" {
