@@ -139,3 +139,10 @@ resource "cloudflare_record" "www" {
   content = "bporter816.github.io"
   proxied = true
 }
+
+resource "cloudflare_record" "github_pages_verification" {
+  zone_id = cloudflare_zone.issilksongoutyet_com.id
+  type    = "TXT"
+  name    = "_github-pages-challenge-bporter816"
+  content = "98bf64c88f3af65119a09848b9c108"
+}
