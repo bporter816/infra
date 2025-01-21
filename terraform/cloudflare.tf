@@ -144,7 +144,7 @@ resource "cloudflare_workers_script" "issilksongoutyet_com_rebuild" {
 
 resource "cloudflare_workers_cron_trigger" "issilksongoutyet_com_rebuild_trigger" {
   account_id  = var.cloudflare_account_id
-  script_name = cloudflare_workers_script.rebuild.name
+  script_name = cloudflare_workers_script.issilksongoutyet_com_rebuild.name
   schedules = [
     "0 * * * *", # hourly
   ]
@@ -153,6 +153,6 @@ resource "cloudflare_workers_cron_trigger" "issilksongoutyet_com_rebuild_trigger
 resource "cloudflare_workers_secret" "issilksongoutyet_com_deploy_hook_url" {
   account_id  = var.cloudflare_account_id
   name        = "DEPLOY_HOOK_URL"
-  script_name = cloudflare_workers_script.rebuild.name
+  script_name = cloudflare_workers_script.issilksongoutyet_com_rebuild.name
   secret_text = local.website_secrets["SILKSONG_DEPLOY_HOOK_URL"]
 }
