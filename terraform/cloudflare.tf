@@ -146,3 +146,29 @@ resource "cloudflare_record" "github_pages_verification" {
   name    = "_github-pages-challenge-bporter816"
   content = "98bf64c88f3af65119a09848b9c108"
 }
+
+import {
+  id = "${var.cloudflare_account_id}/issilksongoutyet-com"
+  to = cloudflare_pages_project.issilksongoutyet_com
+}
+
+resource "cloudflare_pages_project" "issilksongoutyet_com" {
+  account_id        = var.cloudflare_account_id
+  production_branch = "main"
+  name              = "issilksongoutyet-com"
+
+  source {
+    type = "github"
+    config {
+      owner             = "bporter816"
+      repo_name         = "issilksongoutyet.com"
+      production_branch = "main"
+    }
+  }
+
+  build_config {
+    build_command   = "sh build.sh"
+    destination_dir = "_site"
+    build_caching   = false
+  }
+}
