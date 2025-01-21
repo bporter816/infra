@@ -100,13 +100,6 @@ resource "cloudflare_zone" "issilksongoutyet_com" {
   plan       = "free"
 }
 
-resource "cloudflare_record" "github_pages_verification" {
-  zone_id = cloudflare_zone.issilksongoutyet_com.id
-  type    = "TXT"
-  name    = "_github-pages-challenge-bporter816"
-  content = "98bf64c88f3af65119a09848b9c108"
-}
-
 resource "cloudflare_pages_project" "issilksongoutyet_com" {
   account_id        = var.cloudflare_account_id
   production_branch = "main"
@@ -140,4 +133,26 @@ resource "cloudflare_record" "issilksongoutyet_com_apex" {
   name    = "@"
   content = "issilksongoutyet-com.pages.dev"
   proxied = true
+}
+
+resource "cloudflare_workers_script" "issilksongoutyet_com_rebuild" {
+  account_id = var.cloudflare_account_id
+  name       = "rebuild-site"
+  module     = true
+  content    = file("workers/rebuild-site.js")
+}
+
+resource "cloudflare_workers_cron_trigger" "issilksongoutyet_com_rebuild_trigger" {
+  account_id  = var.cloudflare_account_id
+  script_name = cloudflare_workers_script.rebuild.name
+  schedules = [
+    "0 * * * *", # hourly
+  ]
+}
+
+resource "cloudflare_workers_secret" "issilksongoutyet_com_deploy_hook_url" {
+  account_id  = var.cloudflare_account_id
+  name        = "DEPLOY_HOOK_URL"
+  script_name = cloudflare_workers_script.rebuild.name
+  secret_text = local.website_secrets["SILKSONG_DEPLOY_HOOK_URL"]
 }
