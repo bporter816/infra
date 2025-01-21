@@ -100,56 +100,11 @@ resource "cloudflare_zone" "issilksongoutyet_com" {
   plan       = "free"
 }
 
-resource "cloudflare_record" "github_1" {
-  zone_id = cloudflare_zone.issilksongoutyet_com.id
-  type    = "A"
-  name    = "@"
-  content = "185.199.108.153"
-  proxied = true
-}
-
-resource "cloudflare_record" "github_2" {
-  zone_id = cloudflare_zone.issilksongoutyet_com.id
-  type    = "A"
-  name    = "@"
-  content = "185.199.109.153"
-  proxied = true
-}
-
-resource "cloudflare_record" "github_3" {
-  zone_id = cloudflare_zone.issilksongoutyet_com.id
-  type    = "A"
-  name    = "@"
-  content = "185.199.110.153"
-  proxied = true
-}
-
-resource "cloudflare_record" "github_4" {
-  zone_id = cloudflare_zone.issilksongoutyet_com.id
-  type    = "A"
-  name    = "@"
-  content = "185.199.111.153"
-  proxied = true
-}
-
-resource "cloudflare_record" "www" {
-  zone_id = cloudflare_zone.issilksongoutyet_com.id
-  type    = "CNAME"
-  name    = "www"
-  content = "bporter816.github.io"
-  proxied = true
-}
-
 resource "cloudflare_record" "github_pages_verification" {
   zone_id = cloudflare_zone.issilksongoutyet_com.id
   type    = "TXT"
   name    = "_github-pages-challenge-bporter816"
   content = "98bf64c88f3af65119a09848b9c108"
-}
-
-import {
-  id = "${var.cloudflare_account_id}/issilksongoutyet-com"
-  to = cloudflare_pages_project.issilksongoutyet_com
 }
 
 resource "cloudflare_pages_project" "issilksongoutyet_com" {
@@ -171,4 +126,18 @@ resource "cloudflare_pages_project" "issilksongoutyet_com" {
     destination_dir = "_site"
     build_caching   = false
   }
+}
+
+resource "cloudflare_pages_domain" "issilksongoutyet_com_domain" {
+  account_id   = var.cloudflare_account_id
+  project_name = "issilksongoutyet-com"
+  domain       = "issilksongoutyet.com"
+}
+
+resource "cloudflare_record" "issilksongoutyet_com_apex" {
+  zone_id = cloudflare_zone.issilksongoutyet_com.id
+  type    = "CNAME"
+  name    = "@"
+  content = "issilksongoutyet-com.pages.dev"
+  proxied = true
 }
