@@ -137,7 +137,7 @@ resource "cloudflare_record" "issilksongoutyet_com_apex" {
 
 resource "cloudflare_workers_script" "issilksongoutyet_com_rebuild" {
   account_id = var.cloudflare_account_id
-  name       = "rebuild-site"
+  name       = "rebuild-issilksongoutyet-com"
   module     = true
   content    = file("workers/rebuild-site.js")
 }
