@@ -70,6 +70,15 @@ resource "cloudflare_record" "apex" {
   proxied = true
 }
 
+resource "cloudflare_record" "benjaminporter_me_www" {
+  zone_id = cloudflare_zone.benjaminporter_me.id
+  type    = "CNAME"
+  name    = "www"
+  content = "benjaminporter-me.pages.dev"
+  comment = "Proxied for redirect to apex"
+  proxied = true
+}
+
 resource "cloudflare_workers_script" "rebuild" {
   account_id = var.cloudflare_account_id
   name       = "rebuild-site"
@@ -90,6 +99,28 @@ resource "cloudflare_workers_secret" "deploy_hook_url" {
   name        = "DEPLOY_HOOK_URL"
   script_name = cloudflare_workers_script.rebuild.name
   secret_text = local.website_secrets["DEPLOY_HOOK_URL"]
+}
+
+resource "cloudflare_ruleset" "benjaminporter_me_redirects" {
+  zone_id = cloudflare_zone.benjaminporter_me.id
+  phase   = "http_request_dynamic_redirect"
+  kind    = "zone"
+  name    = "redirects"
+
+  rules {
+    description = "Redirect www to apex"
+    action      = "redirect"
+    expression  = "(http.host eq \"www.benjaminporter.me\")"
+    enabled     = true
+    action_parameters {
+      from_value {
+        status_code = 302
+        target_url {
+          value = "https://benjaminporter.me"
+        }
+      }
+    }
+  }
 }
 
 # issilksongoutyet.com
@@ -135,6 +166,15 @@ resource "cloudflare_record" "issilksongoutyet_com_apex" {
   proxied = true
 }
 
+resource "cloudflare_record" "issilksongoutyet_com_www" {
+  zone_id = cloudflare_zone.issilksongoutyet_com.id
+  type    = "CNAME"
+  name    = "www"
+  content = "issilksongoutyet-com.pages.dev"
+  comment = "Proxied for redirect to apex"
+  proxied = true
+}
+
 resource "cloudflare_workers_script" "issilksongoutyet_com_rebuild" {
   account_id = var.cloudflare_account_id
   name       = "rebuild-issilksongoutyet-com"
@@ -155,4 +195,26 @@ resource "cloudflare_workers_secret" "issilksongoutyet_com_deploy_hook_url" {
   name        = "DEPLOY_HOOK_URL"
   script_name = cloudflare_workers_script.issilksongoutyet_com_rebuild.name
   secret_text = local.website_secrets["SILKSONG_DEPLOY_HOOK_URL"]
+}
+
+resource "cloudflare_ruleset" "issilksongoutyet_com_redirects" {
+  zone_id = cloudflare_zone.issilksongoutyet_com.id
+  phase   = "http_request_dynamic_redirect"
+  kind    = "zone"
+  name    = "redirects"
+
+  rules {
+    description = "Redirect www to apex"
+    action      = "redirect"
+    expression  = "(http.host eq \"www.issilksongoutyet.com\")"
+    enabled     = true
+    action_parameters {
+      from_value {
+        status_code = 302
+        target_url {
+          value = "https://issilksongoutyet.com"
+        }
+      }
+    }
+  }
 }
