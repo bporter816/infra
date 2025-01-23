@@ -38,7 +38,7 @@ module "issilksongoutyet_com" {
 
   cloudflare_account_id       = var.cloudflare_account_id
   domain_name                 = "issilksongoutyet.com"
-  pages_build_command         = "sh build.sh"
+  pages_build_command         = "python3 build.py"
   pages_destination_dir       = "_site"
   enable_www_to_apex_redirect = true
   deploy_cron_schedule        = "0 * * * *" # hourly
