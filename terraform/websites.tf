@@ -1,4 +1,3 @@
-# benjaminporter.me
 data "aws_secretsmanager_secret_version" "website_secrets" {
   secret_id = "website-secrets"
 }
