@@ -63,7 +63,7 @@ resource "cloudflare_list_item" "bulk_redirects_item" {
   list_id    = cloudflare_list.bulk_redirects.id
 
   redirect {
-    source_url            = each.key
+    source_url            = "${each.key}/"
     target_url            = "https://${each.value}"
     status_code           = 302
     preserve_query_string = true
