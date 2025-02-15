@@ -19,7 +19,7 @@ resource "cloudflare_pages_project" "pages" {
   build_config {
     build_command   = var.pages_build_command
     destination_dir = var.pages_destination_dir
-    build_caching   = false
+    build_caching   = true
   }
 
   deployment_configs {
