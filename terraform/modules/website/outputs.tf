@@ -4,3 +4,7 @@ output "default_domain_to_custom_domain" {
     (cloudflare_pages_project.pages.subdomain) = var.domain_name
   }
 }
+
+output "cloudflare_zone_id" {
+  value = cloudflare_zone.zone.id
+}
