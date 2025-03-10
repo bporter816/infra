@@ -3,4 +3,5 @@ resource "cloudflare_record" "transiter" {
   type    = "CNAME"
   name    = "transiter.benjaminporter.me"
   content = "transiter-1540602530.us-east-1.elb.amazonaws.com"
+  proxied = true
 }
