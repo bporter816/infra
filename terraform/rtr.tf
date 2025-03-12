@@ -152,15 +152,15 @@ resource "aws_ecs_task_definition" "transiter" {
         ],
         "logConfiguration": {
           "logDriver": "awslogs",
-            "options": {
-              "awslogs-group": "/ecs/transiter",
-              "mode": "non-blocking",
-              "awslogs-create-group": "true",
-              "max-buffer-size": "25m",
-              "awslogs-region": "us-east-1",
-              "awslogs-stream-prefix": "ecs"
-            }
-          }
+          "options": {
+            "awslogs-group": "/ecs/transiter",
+            "mode": "non-blocking",
+            "awslogs-create-group": "true",
+            "max-buffer-size": "25m",
+            "awslogs-region": "us-east-1",
+            "awslogs-stream-prefix": "ecs"
+          },
+          "secretOptions": []
         },
         "healthCheck": {
           "command": [
