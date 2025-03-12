@@ -1,11 +1,3 @@
-resource "cloudflare_record" "transiter" {
-  zone_id = module.benjaminporter_me.cloudflare_zone_id
-  type    = "CNAME"
-  name    = "transiter.benjaminporter.me"
-  content = "transiter-1540602530.us-east-1.elb.amazonaws.com"
-  proxied = true
-}
-
 resource "aws_ecs_task_definition" "transiter" {
   family                   = "transiter"
   requires_compatibilities = ["FARGATE"]
@@ -248,4 +240,40 @@ resource "aws_ecs_service" "transiter" {
     container_name   = "caddy"
     container_port   = 8090
   }
+}
+
+
+# Tunnel
+resource "random_password" "tunnel_secret" {
+  length = 64
+}
+
+resource "cloudflare_zero_trust_tunnel_cloudflared" "transiter" {
+  account_id = var.cloudflare_account_id
+  name       = "transiter"
+  secret     = base64sha256(random_password.tunnel_secret.result)
+}
+
+resource "cloudflare_zero_trust_tunnel_cloudflared_config" "transiter" {
+  account_id = var.cloudflare_account_id
+  tunnel_id  = cloudflare_zero_trust_tunnel_cloudflared.transiter.id
+
+  config {
+    ingress_rule {
+      hostname = cloudflare_record.transiter.hostname
+      service  = "http://localhost:8090"
+    }
+
+    ingress_rule {
+      service = "http_status:404"
+    }
+  }
+}
+
+resource "cloudflare_record" "transiter" {
+  zone_id = module.benjaminporter_me.cloudflare_zone_id
+  type    = "CNAME"
+  name    = "transiter.benjaminporter.me"
+  content = cloudflare_zero_trust_tunnel_cloudflared.transiter.cname
+  proxied = true
 }
