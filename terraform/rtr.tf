@@ -29,7 +29,7 @@ data "aws_iam_policy_document" "transiter_permissions" {
       "logs:CreateLogStream",
       "logs:PutLogEvents",
     ]
-    resources = [aws_cloudwatch_log_group.transiter.arn]
+    resources = ["${aws_cloudwatch_log_group.transiter.arn}:*"]
   }
 }
 
