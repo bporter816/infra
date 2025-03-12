@@ -1,3 +1,7 @@
+resource "aws_cloudwatch_log_group" "transiter" {
+  name = "/ecs/transiter"
+}
+
 data "aws_iam_policy_document" "transiter_assume_role_policy" {
   statement {
     sid    = ""
@@ -16,6 +20,16 @@ data "aws_iam_policy_document" "transiter_permissions" {
     effect    = "Allow"
     actions   = ["secretsmanager:GetSecretValue"]
     resources = [aws_secretsmanager_secret.tunnel_token.arn]
+  }
+
+  statement {
+    sid    = "Logs"
+    effect = "Allow"
+    actions = [
+      "logs:CreateLogStream",
+      "logs:PutLogEvents",
+    ]
+    resources = [aws_cloudwatch_log_group.transiter.arn]
   }
 }
 
