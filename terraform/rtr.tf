@@ -3,6 +3,7 @@ resource "aws_ecs_task_definition" "transiter" {
   requires_compatibilities = ["FARGATE"]
   cpu                      = "256"
   memory                   = "1024"
+  network_mode             = "awsvpc"
   runtime_platform {
     cpu_architecture        = "X86_64"
     operating_system_family = "LINUX"
