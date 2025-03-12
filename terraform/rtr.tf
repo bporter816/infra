@@ -55,6 +55,7 @@ resource "aws_ecs_task_definition" "transiter" {
     operating_system_family = "LINUX"
   }
   execution_role_arn = aws_iam_role.transiter_task_execution_role.arn
+  skip_destroy       = true
 
   container_definitions = <<-EOT
     [
@@ -162,16 +163,6 @@ resource "aws_ecs_task_definition" "transiter" {
           },
           "secretOptions": []
         },
-        "healthCheck": {
-          "command": [
-            "CMD-SHELL",
-            "curl -f http://localhost:8090 || exit 1"
-          ],
-          "interval": 30,
-          "timeout": 5,
-          "retries": 3,
-          "startPeriod": 30
-        },
         "systemControls": []
       },
       {
@@ -268,7 +259,7 @@ resource "aws_ecs_task_definition" "transiter" {
         "dependsOn": [
           {
             "containerName": "caddy",
-            "condition": "HEALTHY"
+            "condition": "START"
           }
         ],
         "logConfiguration": {
