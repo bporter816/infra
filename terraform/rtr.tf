@@ -103,6 +103,16 @@ resource "aws_ecs_task_definition" "transiter" {
             "condition": "SUCCESS"
           }
         ],
+        "healthCheck": {
+          "command": [
+            "CMD-SHELL",
+            "curl -f http://localhost:8090 || exit 1"
+          ],
+          "interval": 30,
+          "timeout": 5,
+          "retries": 3,
+          "startPeriod": 30
+        },
         "systemControls": []
       },
       {
