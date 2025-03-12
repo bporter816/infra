@@ -184,7 +184,7 @@ resource "aws_ecs_task_definition" "transiter" {
         "essential": false,
         "command": [
           "tunnel",
-          "--no-autoupdate",
+          "--no-autoupdate"
         ],
         "environment": [],
         "secrets": [
