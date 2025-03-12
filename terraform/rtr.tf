@@ -175,6 +175,46 @@ resource "aws_ecs_task_definition" "transiter" {
           "secretOptions": []
         },
         "systemControls": []
+      },
+      {
+        "name": "cloudflared",
+        "image": "cloudflare/cloudflared:2025.2.1",
+        "cpu": 0,
+        "portMappings": [],
+        "essential": false,
+        "command": [
+          "tunnel",
+          "--no-autoupdate",
+        ],
+        "environment": [],
+        "secrets": [
+          {
+            "name": "TUNNEL_TOKEN",
+            "valueFrom": "${aws_secretsmanager_secret.tunnel_token.arn}:TUNNEL_TOKEN::"
+          }
+        ],
+        "environmentFiles": [],
+        "mountPoints": [],
+        "volumesFrom": [],
+        "dependsOn": [
+          {
+            "containerName": "caddy",
+            "condition": "HEALTHY"
+          }
+        ],
+        "logConfiguration": {
+          "logDriver": "awslogs",
+          "options": {
+            "awslogs-group": "/ecs/transiter",
+            "mode": "non-blocking",
+            "awslogs-create-group": "true",
+            "max-buffer-size": "25m",
+            "awslogs-region": "us-east-1",
+            "awslogs-stream-prefix": "ecs"
+          },
+          "secretOptions": []
+        },
+        "systemControls": []
       }
     ]
   EOT
@@ -234,12 +274,6 @@ resource "aws_ecs_service" "transiter" {
   deployment_controller {
     type = "ECS"
   }
-
-  load_balancer {
-    target_group_arn = "arn:aws:elasticloadbalancing:us-east-1:521554910789:targetgroup/ecs-main-transiter/a588bf2b7b0a4967" # TODO don't hardcode
-    container_name   = "caddy"
-    container_port   = 8090
-  }
 }
 
 
@@ -252,6 +286,17 @@ resource "cloudflare_zero_trust_tunnel_cloudflared" "transiter" {
   account_id = var.cloudflare_account_id
   name       = "transiter"
   secret     = base64sha256(random_password.tunnel_secret.result)
+}
+
+resource "aws_secretsmanager_secret" "tunnel_token" {
+  name = "tunnel-token"
+}
+
+resource "aws_secretsmanager_secret_version" "tunnel_token" {
+  secret_id = aws_secretsmanager_secret.tunnel_token.id
+  secret_string = jsonencode({
+    TUNNEL_TOKEN = cloudflare_zero_trust_tunnel_cloudflared.transiter.tunnel_token
+  })
 }
 
 resource "cloudflare_zero_trust_tunnel_cloudflared_config" "transiter" {
