@@ -1,3 +1,35 @@
+data "aws_iam_policy_document" "transiter_assume_role_policy" {
+  statement {
+    sid    = ""
+    effect = "Allow"
+    principals {
+      type        = "Service"
+      identifiers = ["ecs-tasks.amazonaws.com"]
+    }
+    actions = ["sts:AssumeRole"]
+  }
+}
+
+data "aws_iam_policy_document" "transiter_permissions" {
+  statement {
+    sid       = "Secrets"
+    effect    = "Allow"
+    actions   = ["secretsmanager:GetSecretValue"]
+    resources = [aws_secretsmanager_secret.tunnel_token.arn]
+  }
+}
+
+resource "aws_iam_role" "transiter_task_execution_role" {
+  assume_role_policy = data.aws_iam_policy_document.transiter_assume_role_policy.json
+  name               = "transiter"
+}
+
+resource "aws_iam_role_policy" "transiter_inline" {
+  role   = aws_iam_role.transiter_task_execution_role.id
+  name   = "secrets"
+  policy = data.aws_iam_policy_document.transiter_permissions.json
+}
+
 resource "aws_ecs_task_definition" "transiter" {
   family                   = "transiter"
   requires_compatibilities = ["FARGATE"]
@@ -8,7 +40,7 @@ resource "aws_ecs_task_definition" "transiter" {
     cpu_architecture        = "X86_64"
     operating_system_family = "LINUX"
   }
-  execution_role_arn = "arn:aws:iam::521554910789:role/ecsTaskExecutionRole" # TODO don't hardcode this
+  execution_role_arn = aws_iam_role.transiter_task_execution_role.arn
 
   container_definitions = <<-EOT
     [
