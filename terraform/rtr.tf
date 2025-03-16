@@ -334,6 +334,12 @@ resource "aws_ecs_service" "transiter" {
   deployment_controller {
     type = "ECS"
   }
+
+  lifecycle {
+    ignore_changes = [
+      desired_count,
+    ]
+  }
 }
 
 
