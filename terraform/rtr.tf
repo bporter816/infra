@@ -65,9 +65,9 @@ resource "aws_ecs_task_definition" "transiter" {
         "cpu": 0,
         "portMappings": [
           {
-            "name": "transiter-8080-tcp",
-            "containerPort": 8080,
-            "hostPort": 8080,
+            "name": "transiter-${var.rtr_transiter_ingress_port}-tcp",
+            "containerPort": ${var.rtr_transiter_ingress_port},
+            "hostPort": ${var.rtr_transiter_ingress_port},
             "protocol": "tcp",
             "appProtocol": "http"
           }
@@ -102,7 +102,7 @@ resource "aws_ecs_task_definition" "transiter" {
         "healthCheck": {
           "command": [
             "CMD-SHELL",
-            "curl -f http://localhost:8080 || exit 1"
+            "curl -f http://localhost:${var.rtr_transiter_ingress_port} || exit 1"
           ],
           "interval": 30,
           "timeout": 5,
@@ -117,9 +117,9 @@ resource "aws_ecs_task_definition" "transiter" {
         "cpu": 0,
         "portMappings": [
           {
-            "name": "caddy-8090-tcp",
-            "containerPort": 8090,
-            "hostPort": 8090,
+            "name": "caddy-${var.rtr_caddy_ingress_port}-tcp",
+            "containerPort": ${var.rtr_caddy_ingress_port},
+            "hostPort": ${var.rtr_caddy_ingress_port},
             "protocol": "tcp",
             "appProtocol": "http"
           }
@@ -129,9 +129,9 @@ resource "aws_ecs_task_definition" "transiter" {
           "caddy",
           "reverse-proxy",
           "--from",
-          ":8090",
+          ":${var.rtr_caddy_ingress_port}",
           "--to",
-          "http://localhost:8080",
+          "http://localhost:${var.rtr_transiter_ingress_port}",
           "--header-up",
           "X-Transiter-Host: https://transiter.benjaminporter.me",
           "--header-down",
@@ -288,16 +288,16 @@ resource "aws_security_group" "transiter" {
 resource "aws_vpc_security_group_ingress_rule" "public_ipv4" {
   security_group_id = aws_security_group.transiter.id
   ip_protocol       = "tcp"
-  from_port         = 8090
-  to_port           = 8090
+  from_port         = var.rtr_caddy_ingress_port
+  to_port           = var.rtr_caddy_ingress_port
   cidr_ipv4         = "0.0.0.0/0"
 }
 
 resource "aws_vpc_security_group_ingress_rule" "public_ipv6" {
   security_group_id = aws_security_group.transiter.id
   ip_protocol       = "tcp"
-  from_port         = 8090
-  to_port           = 8090
+  from_port         = var.rtr_caddy_ingress_port
+  to_port           = var.rtr_caddy_ingress_port
   cidr_ipv6         = "::/0"
 }
 
@@ -372,7 +372,7 @@ resource "cloudflare_zero_trust_tunnel_cloudflared_config" "transiter" {
   config {
     ingress_rule {
       hostname = cloudflare_record.transiter.hostname
-      service  = "http://localhost:8090"
+      service  = "http://localhost:${var.rtr_caddy_ingress_port}"
     }
 
     ingress_rule {
