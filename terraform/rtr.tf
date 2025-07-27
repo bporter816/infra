@@ -344,14 +344,14 @@ resource "aws_ecs_service" "transiter" {
 
 
 # Tunnel
-resource "random_password" "tunnel_secret" {
+resource "random_password" "rtr_tunnel_secret" {
   length = 64
 }
 
 resource "cloudflare_zero_trust_tunnel_cloudflared" "transiter" {
   account_id = var.cloudflare_account_id
   name       = "transiter"
-  secret     = base64sha256(random_password.tunnel_secret.result)
+  secret     = base64sha256(random_password.rtr_tunnel_secret.result)
 }
 
 resource "aws_secretsmanager_secret" "tunnel_token" {

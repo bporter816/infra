@@ -12,3 +12,12 @@ variable "rtr_transiter_ingress_port" {
   type    = number
   default = 8080
 }
+
+variable "home_assistant_ip" {
+  type = string
+}
+
+variable "home_assistant_port" {
+  type    = number
+  default = 8123
+}
