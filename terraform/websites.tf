@@ -18,6 +18,7 @@ module "benjaminporter_me" {
   pages_build_command         = "sh build.sh"
   pages_destination_dir       = "public"
   enable_www_to_apex_redirect = true
+  auto_deploy                 = true
   deploy_cron_schedule        = "0 0 * * *" # daily
   deploy_hook_url             = local.website_secrets["DEPLOY_HOOK_URL"]
   pages_environment_variables = {
@@ -40,11 +41,8 @@ module "issilksongoutyet_com" {
 
   cloudflare_account_id       = var.cloudflare_account_id
   domain_name                 = "issilksongoutyet.com"
-  pages_build_command         = "python3 build.py"
-  pages_destination_dir       = "_site"
   enable_www_to_apex_redirect = true
-  deploy_cron_schedule        = "0 * * * *" # hourly
-  deploy_hook_url             = local.website_secrets["SILKSONG_DEPLOY_HOOK_URL"]
+  auto_deploy                 = false
   pages_environment_variables = {}
   pages_secrets               = {}
 }

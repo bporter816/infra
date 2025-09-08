@@ -2,13 +2,19 @@ variable "domain_name" {
   type = string
 }
 
+variable "auto_deploy" {
+  type = bool
+}
+
 variable "deploy_cron_schedule" {
-  type = string
+  type    = string
+  default = null
 }
 
 variable "deploy_hook_url" {
   type      = string
   sensitive = true
+  default   = null
 }
 
 variable "enable_www_to_apex_redirect" {
@@ -20,11 +26,13 @@ variable "cloudflare_account_id" {
 }
 
 variable "pages_build_command" {
-  type = string
+  type    = string
+  default = null
 }
 
 variable "pages_destination_dir" {
-  type = string
+  type    = string
+  default = null
 }
 
 variable "pages_environment_variables" {
